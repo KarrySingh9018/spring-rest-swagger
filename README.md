@@ -1,1 +1,1 @@
-# springmvc-ws
+# spring-swagger-project
