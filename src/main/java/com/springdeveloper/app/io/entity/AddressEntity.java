@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import com.springdeveloper.app.io.entity.UserEntity;
 
 @Entity(name="addresses")
 public class AddressEntity implements Serializable {

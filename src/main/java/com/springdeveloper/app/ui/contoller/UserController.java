@@ -21,6 +21,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,23 +43,21 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/users") // http://localhost:8080/users
-//@CrossOrigin(origins= {"http://localhost:8083", "http://localhost:8084"})
+@CrossOrigin(origins= {"http://localhost:8083", "http://localhost:8084"})
 public class UserController {
 
 	@Autowired
-  UserService userService;
+	UserService userService;
 
 	@Autowired
-  AddressService addressService;
+	AddressService addressService;
 
 	@Autowired
 	AddressService addressesService;
 
-	@ApiOperation(value="The Get User Details Web Service Endpoint",
-			notes="${userController.GetUser.ApiOperation.Notes}")
+	@ApiOperation(value = "The Get User Details Web Service Endpoint", notes = "${userController.GetUser.ApiOperation.Notes}")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="authorization", value="${userController.authorizationHeader.description}", paramType="header")
-	})
+			@ApiImplicitParam(name = "authorization", value = "${userController.authorizationHeader.description}", paramType = "header") })
 	@GetMapping(path = "/{id}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public UserRest getUser(@PathVariable String id) {
 		UserRest returnValue = new UserRest();
@@ -90,8 +89,7 @@ public class UserController {
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
 					MediaType.APPLICATION_JSON_VALUE })
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="authorization", value="${userController.authorizationHeader.description}", paramType="header")
-	})
+			@ApiImplicitParam(name = "authorization", value = "${userController.authorizationHeader.description}", paramType = "header") })
 	public UserRest updateUser(@PathVariable String id, @RequestBody UserDetailsRequestModel userDetails) {
 		UserRest returnValue = new UserRest();
 
@@ -106,8 +104,7 @@ public class UserController {
 
 	@DeleteMapping(path = "/{id}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="authorization", value="${userController.authorizationHeader.description}", paramType="header")
-	})
+			@ApiImplicitParam(name = "authorization", value = "${userController.authorizationHeader.description}", paramType = "header") })
 	public OperationStatusModel deleteUser(@PathVariable String id) {
 		OperationStatusModel returnValue = new OperationStatusModel();
 		returnValue.setOperationName(RequestOperationName.DELETE.name());
@@ -119,8 +116,7 @@ public class UserController {
 	}
 
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="authorization", value="${userController.authorizationHeader.description}", paramType="header")
-	})
+			@ApiImplicitParam(name = "authorization", value = "${userController.authorizationHeader.description}", paramType = "header") })
 	@GetMapping(produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public List<UserRest> getUsers(@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "limit", defaultValue = "2") int limit) {
@@ -132,19 +128,17 @@ public class UserController {
 		}.getType();
 		returnValue = new ModelMapper().map(users, listType);
 
-		/*for (UserDto userDto : users) {
-			UserRest userModel = new UserRest();
-			BeanUtils.copyProperties(userDto, userModel);
-			returnValue.add(userModel);
-		}*/
+		/*
+		 * for (UserDto userDto : users) { UserRest userModel = new UserRest();
+		 * BeanUtils.copyProperties(userDto, userModel); returnValue.add(userModel); }
+		 */
 
 		return returnValue;
 	}
 
 	// http://localhost:8080/mobile-app-ws/users/jfhdjeufhdhdj/addressses
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="authorization", value="${userController.authorizationHeader.description}", paramType="header")
-	})
+			@ApiImplicitParam(name = "authorization", value = "${userController.authorizationHeader.description}", paramType = "header") })
 	@GetMapping(path = "/{id}/addresses", produces = { MediaType.APPLICATION_XML_VALUE,
 			MediaType.APPLICATION_JSON_VALUE, "application/hal+json" })
 	public Resources<AddressesRest> getUserAddresses(@PathVariable String id) {
@@ -171,8 +165,7 @@ public class UserController {
 	}
 
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="authorization", value="${userController.authorizationHeader.description}", paramType="header")
-	})
+			@ApiImplicitParam(name = "authorization", value = "${userController.authorizationHeader.description}", paramType = "header") })
 	@GetMapping(path = "/{userId}/addresses/{addressId}", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE, "application/hal+json" })
 	public Resource<AddressesRest> getUserAddress(@PathVariable String userId, @PathVariable String addressId) {
@@ -193,72 +186,64 @@ public class UserController {
 		return new Resource<>(addressesRestModel);
 	}
 
-	 /*
-     * http://localhost:8080/mobile-app-ws/users/email-verification?token=sdfsdf
-     * */
-    @GetMapping(path = "/email-verification", produces = { MediaType.APPLICATION_JSON_VALUE,
-            MediaType.APPLICATION_XML_VALUE })
-    public OperationStatusModel verifyEmailToken(@RequestParam(value = "token") String token) {
+	/*
+	 * http://localhost:8080/mobile-app-ws/users/email-verification?token=sdfsdf
+	 */
+	@GetMapping(path = "/email-verification", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public OperationStatusModel verifyEmailToken(@RequestParam(value = "token") String token) {
 
-        OperationStatusModel returnValue = new OperationStatusModel();
-        returnValue.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
+		OperationStatusModel returnValue = new OperationStatusModel();
+		returnValue.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
 
-        boolean isVerified = userService.verifyEmailToken(token);
+		boolean isVerified = userService.verifyEmailToken(token);
 
-        if(isVerified)
-        {
-            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
-        } else {
-            returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
-        }
+		if (isVerified) {
+			returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+		} else {
+			returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+		}
 
-        return returnValue;
-    }
+		return returnValue;
+	}
 
-	 /*
-     * http://localhost:8080/mobile-app-ws/users/password-reset-request
-     * */
-    @PostMapping(path = "/password-reset-request",
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-    )
-    public OperationStatusModel requestReset(@RequestBody PasswordResetRequestModel passwordResetRequestModel) {
-    	OperationStatusModel returnValue = new OperationStatusModel();
+	/*
+	 * http://localhost:8080/mobile-app-ws/users/password-reset-request
+	 */
+	@PostMapping(path = "/password-reset-request", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
+					MediaType.APPLICATION_XML_VALUE })
+	public OperationStatusModel requestReset(@RequestBody PasswordResetRequestModel passwordResetRequestModel) {
+		OperationStatusModel returnValue = new OperationStatusModel();
 
-        boolean operationResult = userService.requestPasswordReset(passwordResetRequestModel.getEmail());
+		boolean operationResult = userService.requestPasswordReset(passwordResetRequestModel.getEmail());
 
-        returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
-        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+		returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
+		returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
 
-        if(operationResult)
-        {
-            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
-        }
+		if (operationResult) {
+			returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+		}
 
-        return returnValue;
-    }
+		return returnValue;
+	}
 
+	@PostMapping(path = "/password-reset", consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel) {
+		OperationStatusModel returnValue = new OperationStatusModel();
 
+		boolean operationResult = userService.resetPassword(passwordResetModel.getToken(),
+				passwordResetModel.getPassword());
 
-    @PostMapping(path = "/password-reset",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-    )
-    public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel) {
-    	OperationStatusModel returnValue = new OperationStatusModel();
+		returnValue.setOperationName(RequestOperationName.PASSWORD_RESET.name());
+		returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
 
-        boolean operationResult = userService.resetPassword(
-                passwordResetModel.getToken(),
-                passwordResetModel.getPassword());
+		if (operationResult) {
+			returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+		}
 
-        returnValue.setOperationName(RequestOperationName.PASSWORD_RESET.name());
-        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
-
-        if(operationResult)
-        {
-            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
-        }
-
-        return returnValue;
-    }
+		return returnValue;
+	}
 
 }
