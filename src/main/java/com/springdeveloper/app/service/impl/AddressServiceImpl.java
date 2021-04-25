@@ -22,6 +22,10 @@ public class AddressServiceImpl implements AddressService {
 
 	@Autowired
     AddressRepository addressRepository;
+	
+	public String returnString() {
+		return null;
+	}
 
 	@Override
 	public List<AddressDTO> getAddresses(String userId) {

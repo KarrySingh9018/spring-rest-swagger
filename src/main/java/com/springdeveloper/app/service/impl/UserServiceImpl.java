@@ -32,7 +32,7 @@ import com.springdeveloper.app.ui.model.response.ErrorMessages;
 public class UserServiceImpl implements UserService {
 
 	@Autowired
-    	UserRepository userRepository;
+    UserRepository userRepository;
 
 	@Autowired
 	Utils utils;
@@ -41,10 +41,10 @@ public class UserServiceImpl implements UserService {
 	BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@Autowired
-    	PasswordResetTokenRepository passwordResetTokenRepository;
+    PasswordResetTokenRepository passwordResetTokenRepository;
 
 	@Autowired
-    	AmazonSES amazonSES;
+    AmazonSES amazonSES;
 	
 	public String returnString() {
 		return null;
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
 		//BeanUtils.copyProperties(storedUserDetails, returnValue);
 		UserDto returnValue  = modelMapper.map(storedUserDetails, UserDto.class);
 
-        	// Send an email message to user to verify their email address
+        // Send an email message to user to verify their email address
 		amazonSES.verifyEmail(returnValue);
 
 		return returnValue;
@@ -127,6 +127,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public UserDto updateUser(String userId, UserDto user) {
 		UserDto returnValue = new UserDto();
 
